@@ -11,7 +11,7 @@
 
 	window.wfm_core = {
 		url : '//fonts.googleapis.com/css?family=',
-		apiUrl: 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyCrsTDigL61TFHYPHTZduQP1cGi8CLfp90&callback=wfm_core.run',
+		apiUrl: 'https://www.googleapis.com/webfonts/v1/webfonts?key='+wfm_data.api+'&callback=wfm_core.run',
 		container: $('.wfm-fonts-view'),
 		pagination: $('.wfm-pagination'),
 		overlayer: $('.wfm-fonts-view-wrap'),
@@ -22,9 +22,25 @@
 		enabledFontView: wp.template('wfm-font-enabled-item'),
 		perPage: 20,
 		init: function () {
+			
+
 			this.onClickAddBtn();
 
-			$.get(this.apiUrl+'&sort=popularity');
+			this.triggerFilter();
+
+			this.sorting();
+
+			this.runEnabledFont();
+
+			this.onClickYourFont();
+
+			this.onClickUpdateBtn();
+
+			this.onClickApiUpdate();
+
+			this.onClickSettings();
+
+			
 
 			$('body').on('relayout', function () {
 				setTimeout(function () {
@@ -32,11 +48,12 @@
 				}, 1000);
 			});
 
-			this.triggerFilter();
+			if (_.isEmpty(wfm_data.api)) {
+				return;
+			}
 
-			this.sorting();
+			$.get(this.apiUrl+'&sort=popularity');
 
-			this.runEnabledFont();
 		},
 		run: function (json) {
 			if( typeof json != 'object' || typeof json.items != 'object'  ){
@@ -507,6 +524,111 @@
 			});
 
 			self.efContainer.append(itemObj);
+		},
+		onClickYourFont: function () {
+			var self = this;
+
+			$('.wfm-your-fonts-wrap').on('click', function (e) {
+				e.preventDefault();
+
+				if ($('.wfm-ef-view-wrap').hasClass('active')) {
+					$('.wfm-ef-view-wrap').removeClass('active');
+				} else {
+					$('.wfm-ef-view-wrap').addClass('active');
+					$('.wfm-api-settings').removeClass('active');
+				}
+			});
+		},
+		onClickSettings: function () {
+			var self = this;
+
+			$('.wfm-settings-wrap').on('click', function (e) {
+				e.preventDefault();
+
+				if ($('.wfm-api-settings').hasClass('active')) {
+					$('.wfm-api-settings').removeClass('active');
+				} else {
+					$('.wfm-api-settings').addClass('active');
+					$('.wfm-ef-view-wrap').removeClass('active');
+				}
+			});
+		},
+		onClickUpdateBtn: function () {
+			var self = this;
+
+			$('.wfm-ef-view-wrap').on('click', '.wfm-ef-update', function (e) {
+
+				e.preventDefault();
+
+				var btn = $(this),
+					item = btn.parents('.wfm-enabled-font-item'),
+					fontName = item.data('wfm_font_name'),
+					updating = item.find('.wfm-font-data-updating'),
+					subsets = [],
+					variants = [];
+
+				if (btn.hasClass('disabled')) {
+					return;
+				}
+
+				item.find('.wfm-ef-variant-checkbox:checked').each(function () {
+					variants.push($(this).val());
+				});
+
+				item.find('.wfm-ef-subset-checkbox:checked').each(function () {
+					subsets.push($(this).val());
+				});
+
+				var ajaxData = {
+					action: 'wfm_change_font',
+					font: fontName,
+					variants: variants,
+					subsets: subsets,
+				};;
+
+				btn.addClass('disabled');
+
+				updating.addClass('active');
+
+				$.ajax({
+					url: wfm_data.ajax_url,
+					method: "POST",
+					data: ajaxData
+				}).done(function (html) {
+					if (html == 1) {
+						btn.removeClass('disabled');
+
+						updating.removeClass('active');
+					}
+				});
+			});
+		},
+		onClickApiUpdate: function () {
+			$('.wfm-save-api-settings').on('click', function (e) {
+				e.preventDefault();
+
+				var btn = $(this),
+					api = $('#googleapi').val(),
+					demo = $('#demotext').val();
+
+				btn.addClass('disabled');
+
+				$('.wfm-font-api-saving').addClass('active');
+
+				var ajaxData = {
+					action: 'wfm_update_api',
+					api: api,
+					demo: demo
+				};
+
+				$.ajax({
+					url: wfm_data.ajax_url,
+					method: "POST",
+					data: ajaxData
+				}).done(function (html) {
+					location.reload(true);
+				});
+			});
 		}
 	};
 

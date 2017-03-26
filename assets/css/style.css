@@ -92,15 +92,15 @@
 	display: block;
 	text-align: center;
 	padding: 13px 10px 14px;
-	background-color: #ff6868;
+	background-color: #222;
 	color: #fff;
 	cursor: pointer;
 }
 
 .wfm-topbar .wfm-menus > li.wfm-your-fonts-wrap strong span{
 	display: inline-block;
-	background-color: #fff;
-	color: #ff6868;
+	background-color: #ff6868;
+	color: #fff;
 	border-radius: 50%;
 	width: 20px;
 	height: 20px;
@@ -379,8 +379,13 @@
 }
 
 .wfm-ef-view-wrap{
-	background-color: #ff6868;
+	background-color: #222;
 	padding: 30px;
+	display: none;
+}
+
+.wfm-ef-view-wrap.active{
+	display: block;
 }
 
 .wfm-enabled-font-item{
@@ -401,7 +406,7 @@
 }
 
 .wfm-enabled-font-item-inner .wfm-enabled-font-data{
-	border-bottom: 1px solid #ff6868;
+	border-bottom: 1px solid #222;
 }
 .wfm-enabled-font-item-inner .wfm-enabled-font-data,
 .wfm-enabled-font-item-inner .wfm-enabled-font-settings{
@@ -432,6 +437,7 @@
 
 .wfm-enabled-font-settings .wfm-row > div label{
 	display: block;
+	margin: 10px 0;
 }
 
 .wfm-ef-remove{
@@ -441,7 +447,8 @@
 	right: 0;
 	font-size: 14px;
 	color: #000;
-	padding: 10px;
+	padding: 7px 12px;
+	box-shadow: none !important;
 }
 
 .wfm-ef-settings{
@@ -451,7 +458,8 @@
 	right: 0;
 	font-size: 14px;
 	color: #000;
-	padding: 10px;
+	padding: 7px 12px;
+	box-shadow: none !important;
 }
 
 .wfm-ef-update{
@@ -463,4 +471,81 @@
     text-align: center;
     text-transform: uppercase;
     margin-top: 20px;
+    font-size: 16px;
+    -webkit-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    transition: all 0.4s;
+}
+
+.wfm-ef-update:hover{
+	background-color: #222;
+	color: #fff;
+}
+
+.wfm-ef-update.disabled{
+	background-color: #f1f1f1 !important;
+	color: #bfbfbf !important;
+}
+
+.wfm-font-api-saving,
+.wfm-font-data-updating{
+	display: none;
+	margin-top: 15px;
+	text-align: center;
+	color: #ff6868;
+	font-size: 16px;
+	line-height: 1.5;
+}
+.wfm-font-api-saving.active,
+.wfm-font-data-updating.active{
+	display: block;
+}
+.wfm-font-api-saving{
+	text-align: left;
+}
+.wfm-api-settings{
+	background-color: #fff;
+	padding: 15px;
+	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	display: none;
+}
+.wfm-api-settings.active{
+	display: block;
+}
+.wfm-api-settings .wfm-api-setting-field{
+	padding: 15px 0;
+}
+.wfm-api-settings .wfm-api-setting-field label{
+	display: block;
+	font-weight: 700;
+	margin-bottom: 10px;
+}
+
+.wfm-api-settings .wfm-api-setting-field input[type="text"]{
+	width: 350px;
+}
+.wfm-api-settings .wfm-api-setting-field p{
+	color: #ababab;
+}
+
+.wfm-save-api-settings{
+	background-color: #ff6868;
+	border: none;
+	color: #fff;
+	padding: 8px 20px;
+	cursor: pointer;
+	font-size: 16px;
+	-webkit-transition: all 0.4s;
+	-o-transition: all 0.4s;
+	transition: all 0.4s;
+}
+
+.wfm-save-api-settings:hover{
+	background-color: #222;
+	color: #fff;
+}
+
+.wfm-save-api-settings.disabled{
+	background-color: #f1f1f1 !important;
+	color: #bfbfbf !important;
 }

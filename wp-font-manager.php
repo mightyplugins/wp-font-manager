@@ -32,6 +32,10 @@ class WP_Font_Manager
 
 		add_action( 'wp_ajax_wfm_add_font', array($this, 'add_font_data') );
 		add_action( 'wp_ajax_wfm_remove_font', array($this, 'remove_font_data') );
+		add_action( 'wp_ajax_wfm_change_font', array($this, 'change_font_data') );
+		add_action( 'wp_ajax_wfm_update_api', array($this, 'update_api_demo') );
+
+		add_action( 'wp_enqueue_scripts', array($this, 'load_google_font') );
 	}
 
 	public function register_pages()
@@ -63,7 +67,8 @@ class WP_Font_Manager
 		wp_localize_script( 'wfm-scripts', 'wfm_data', array(
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'font_families' => $this->get_enabled_fonts(),
-			'fonts' => get_option( 'wfm_fonts', array() )
+			'fonts' => get_option( 'wfm_fonts', array() ),
+			'api' => get_option( 'wfm_google_api', '' )
 		) );
 	}
 
@@ -137,6 +142,90 @@ class WP_Font_Manager
 
 		echo 0;
 		die();
+	}
+
+
+	public function change_font_data()
+	{
+		$font_name = $_POST['font'];
+		$font_subsets = $_POST['subsets'];
+		$font_variants = $_POST['variants'];
+
+		if (!is_array($font_subsets)) {
+			$font_subsets = array();
+		}
+
+		if (!is_array($font_variants)) {
+			$font_variants = array();
+		}
+
+		$wfm_fonts = get_option( 'wfm_fonts', array() );
+
+		if (!empty($wfm_fonts)) {
+			foreach ($wfm_fonts as $key => $font) {
+				if($font['all']['family'] == $font_name){
+					$wfm_fonts[$key]['enabled']['subsets'] = $font_subsets;
+					$wfm_fonts[$key]['enabled']['variants'] = $font_variants;
+				}
+			}
+		}
+
+		echo update_option( 'wfm_fonts', $wfm_fonts );
+		die();
+	}
+
+	public function update_api_demo()
+	{
+		$api = $_POST['api'];
+		$demo = $_POST['demo'];
+
+		update_option( 'wfm_google_api', $api );
+		update_option( 'wfm_demo_text', $demo );
+
+		echo 1;
+		die();
+	}
+
+	public function load_google_font()
+	{
+		$wfm_fonts = get_option( 'wfm_fonts', array() );
+
+		$fonts = array();
+		$all_subsets = array();
+
+		if (!empty($wfm_fonts)) {
+			foreach ($wfm_fonts as $font) {
+				$temp_font = str_replace(' ', '+', $font['all']['family']);
+				$subsets = $font['enabled']['subsets'];
+				$variants = implode(',', $font['enabled']['variants']);
+
+				if (!empty($variants)) {
+					$temp_font .= ':'.$variants;
+				}
+
+				$fonts[] = $temp_font;
+
+				if (!empty($subsets)) {
+					foreach ($subsets as $subset) {
+						$all_subsets[] = $subset;
+					}
+				}
+
+			}
+		}
+
+		$all_subsets = array_unique($all_subsets);
+
+		$font_link = '//fonts.googleapis.com/css?family=';
+
+		$font_link .= implode('|', $fonts);
+
+		if (!empty($all_subsets)) {
+			$font_link .= '&amp;subset=';
+			$font_link .= implode(',', $all_subsets);
+		}
+		
+		wp_enqueue_style( 'wfm-google-font', $font_link );
 	}
 }
 

@@ -57,6 +57,21 @@
 				<li class="wfm-settings-wrap"><strong><i class="fa fa-cogs"></i> Settings</strong></li>
 			</ul>
 		</div>
+		<div class="wfm-api-settings">
+			<div class="wfm-api-settings-inner wp-clearfix">
+				<div class="wfm-api-setting-field">
+					<label for="googleapi">Google API</label>
+					<input type="text" name="googleapi" id="googleapi" value="<?php echo get_option( 'wfm_google_api', '' ); ?>">
+					<p>Getting Google Font data you need an API. <a href="https://developers.google.com/fonts/docs/developer_api#APIKey" target="_blank">Get an API key</a></p>
+				</div>
+				<div class="wfm-api-setting-field">
+					<label for="demotext">Demo Text</label>
+					<textarea name="demotext" id="demotext" cols="100" rows="3"><?php echo get_option( 'wfm_demo_text', 'The quick brown fox jumps over the lazy dog. 1234567890' ); ?></textarea>
+				</div>
+				<button class="wfm-save-api-settings" type="button"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save Settings</button>
+				<div class="wfm-font-api-saving"><i class="fa fa-refresh fa-spin fa-fw"></i> Saving...</div>
+			</div>
+		</div>
 		<div class="wfm-ef-view-wrap">
 			<div class="wfm-ef-view-inner wp-clearfix"></div>
 		</div>
@@ -102,7 +117,8 @@
 						<# }); #>
 					</div>
 				</div>
-				<a href="#" class="wfm-ef-update">Update</a>
+				<a href="#" class="wfm-ef-update"><i class="fa fa-floppy-o" aria-hidden="true"></i> Update</a>
+				<div class="wfm-font-data-updating"><i class="fa fa-refresh fa-spin fa-fw"></i> Updating...</div>
 			</div>
 		</div>
 	</div>
@@ -132,7 +148,7 @@
 				<# } #>
 			</div>
 			<div class="wfm-font-demo" style="font-family: {{ data.name }};">
-				The quick brown fox jumps over the lazy dog. 1234567890
+				<?php echo get_option( 'wfm_demo_text', 'The quick brown fox jumps over the lazy dog. 1234567890' ); ?>
 			</div>
 		</div>
 		<link rel='stylesheet' onload="wfm_core.font_loaded()" href='{{{ data.glink }}}' type='text/css' media='all' />
