@@ -549,3 +549,42 @@
 	background-color: #f1f1f1 !important;
 	color: #bfbfbf !important;
 }
+
+.wfm-notification{
+	position: fixed;
+	bottom: 25px;
+	right: 25px;
+	z-index: 999;
+}
+
+.wfm-notification .wfm-notification-item{
+	margin-top: 15px;
+	float: right;
+	clear: both;
+}
+.wfm-notification .wfm-notification-message{
+	padding: 10px 20px;
+    background-color: #70d674;
+    color: #fff;
+    border-radius: 3px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+}
+
+.wfm-notification-type-warning .wfm-notification-message{
+	background-color: #ffa726;
+}
+
+.wfm-notification-type-error .wfm-notification-message{
+	background-color: #ef5350;
+}
+
+.notice.wfm-notice-item{
+	padding: 20px;
+	font-size: 18px;
+    line-height: 1.8;
+    font-weight: 600;
+}
+
+.wfm-notice-item.wfm-notice-type-error{
+	border-left-color: #fb434a;
+}

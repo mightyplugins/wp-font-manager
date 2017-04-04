@@ -4,6 +4,7 @@
 <div class="wrap">
 	<h1><?php _e('WP Font Manager', 'wp-font-manager'); ?></h1>
 	<div class="wfm-wrap">
+		<div class="wfm-notice"></div>
 		<div class="wfm-topbar wp-clearfix">
 			<ul class="wfm-fonts-filters wp-clearfix">
 				<li>
@@ -75,12 +76,13 @@
 		<div class="wfm-ef-view-wrap">
 			<div class="wfm-ef-view-inner wp-clearfix"></div>
 		</div>
-		<div class="wfm-notice"></div>
+		
 		<div class="wfm-fonts-view-wrap active">
 			<div class="wfm-fonts-view"></div>
 			<div class="wfm-fonts-view-overlayer"><div class="typing_loader"></div></div>
 		</div>
 		<div class="wfm-pagination wp-clearfix"></div>
+		<div class="wfm-notification"></div>
 	</div>
 </div>
 
@@ -152,5 +154,18 @@
 			</div>
 		</div>
 		<link rel='stylesheet' onload="wfm_core.font_loaded()" href='{{{ data.glink }}}' type='text/css' media='all' />
+	</div>
+</script>
+
+<script type="text/html" id="tmpl-wfm-notification-item">
+	<div class="wfm-notification-item wfm-notification-type-{{ data.type }}">
+		<div class="wfm-notification-message">{{{ data.message }}}</div>
+	</div>
+</script>
+
+<script type="text/html" id="tmpl-wfm-notice-item">
+	<div class="wfm-notice-item notice updated settings-error is-dismissible wfm-notice-type-{{ data.type }}">
+		<div class="wfm-notice-message">{{{ data.message }}}</div>
+		<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
 	</div>
 </script>

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WP Font Manager
  * Plugin URI:  https://mightyplugins.com/
- * Description: WP Font Manager for managing your site font managing.
+ * Description: WP Font Manager for managing your site google font.
  * Author:      Mighty Plugins
  * Author URI:  https://mightyplugins.com/
  * Version:     1.0.0
@@ -40,10 +40,17 @@ class WP_Font_Manager
 
 	public function register_pages()
 	{
-		$menu = add_menu_page(__('WP Font Manager', 'wp-font-manager'), __('WP Font Manager', 'wp-font-manager'), 'manage_options', 'wp-font-manager', array($this, 'wp_font_manager_view_cb'), 'dashicons-editor-textcolor', 99);
+		$menu = add_menu_page(__('WP Font Manager', 'wp-font-manager'), __('WP Font Manager', 'wp-font-manager'), 'manage_options', 'wp-font-manager', array($this, 'wp_font_manager_view_cb'), $this->get_svg_icon(), 99);
 
 		add_action( 'admin_print_styles-' . $menu, array($this, 'wp_font_manager_css') );
 		add_action( 'admin_print_scripts-' . $menu, array($this, 'wp_font_manager_js') );
+	}
+
+	public function get_svg_icon()
+	{
+		$svg = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 300" style="enable-background:new 0 0 300 300;" xml:space="preserve"><g><path d="M150,0C67.29,0,0,67.29,0,150s67.29,150,150,150s150-67.29,150-150S232.71,0,150,0z M150,270c-66.168,0-120-53.832-120-120 S83.832,30,150,30s120,53.832,120,120S216.168,270,150,270z"/><path d="M194.463,65h-76.926c-5.522,0-10,4.478-10,10v150c0,5.523,4.478,10,10,10h7.692c5.522,0,10-4.477,10-10v-62.886h49.616 c5.522,0,10-4.478,10-10v-7.306c0-5.522-4.478-10-10-10H135.23V92.308h59.233c5.522,0,10-4.478,10-10V75 C204.463,69.478,199.985,65,194.463,65z"/></g></svg>';
+
+  		return 'data:image/svg+xml;base64,' . base64_encode( $svg );
 	}
 
 	public function wp_font_manager_view_cb()
@@ -68,7 +75,16 @@ class WP_Font_Manager
 			'ajax_url' => admin_url( 'admin-ajax.php' ),
 			'font_families' => $this->get_enabled_fonts(),
 			'fonts' => get_option( 'wfm_fonts', array() ),
-			'api' => get_option( 'wfm_google_api', '' )
+			'api' => get_option( 'wfm_google_api', '' ),
+			'font_added' => sprintf(__('%s font added.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'adding_error' => sprintf(__('Error: we are unable to add %s font. Please try again.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'font_removed' => sprintf(__('%s font removed.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'removing_error' => sprintf(__('Error: we are unable to remove %s font. Please try again.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'font_data_changed' => sprintf(__('%s font data has been updated.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'changing_error' => sprintf(__('Error: we are unable to change %s font. Please try again.', 'wp-font-manager'), '<strong>{{ data.name }}</strong>'),
+			'settings_error' => __('Error: we are unable to save settings. Please try again.', 'wp-font-manager'),
+			'data_error' => __('Error: we are unable to get font. Please check your internet connection and reload this page or try again.', 'wp-font-manager'),
+			'no_api' => __('Error: Please insert a Google Font API. Google font api is requered for this plugin.')
 		) );
 	}
 
@@ -189,6 +205,10 @@ class WP_Font_Manager
 	public function load_google_font()
 	{
 		$wfm_fonts = get_option( 'wfm_fonts', array() );
+
+		if (empty($wfm_fonts)) {
+			return;
+		}
 
 		$fonts = array();
 		$all_subsets = array();

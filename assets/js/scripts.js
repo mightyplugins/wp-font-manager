@@ -16,12 +16,22 @@
 		pagination: $('.wfm-pagination'),
 		overlayer: $('.wfm-fonts-view-wrap'),
 		efContainer: $('.wfm-ef-view-inner'),
+		noticeContainer: $('.wfm-notice'),
+		_options: {
+			evaluate:    /<#([\s\S]+?)#>/g,
+			interpolate: /\{\{\{([\s\S]+?)\}\}\}/g,
+			escape:      /\{\{([^\}]+?)\}\}(?!\})/g,
+			variable:    'data'
+		},
 		fonts: [],
 		items: [],
 		fontView: wp.template('wfm-font-item'),
 		enabledFontView: wp.template('wfm-font-enabled-item'),
+		noticeView: wp.template('wfm-notice-item'),
 		perPage: 20,
 		init: function () {
+
+			var self = this;
 			
 
 			this.onClickAddBtn();
@@ -40,6 +50,8 @@
 
 			this.onClickSettings();
 
+			this.closeNotice();
+
 			
 
 			$('body').on('relayout', function () {
@@ -49,10 +61,16 @@
 			});
 
 			if (_.isEmpty(wfm_data.api)) {
+				this.overlayer.removeClass('active');
+				this.addNotice(wfm_data.no_api, 'error wfm-api-error');
+				$('.wfm-api-settings').addClass('active');
 				return;
 			}
 
-			$.get(this.apiUrl+'&sort=popularity');
+			$.get(this.apiUrl+'&sort=popularity').fail(function() {
+				self.overlayer.removeClass('active');
+				self.addNotice(wfm_data.data_error, 'error');
+			});
 
 		},
 		run: function (json) {
@@ -288,6 +306,7 @@
 						}
 					};
 
+				btn.find('.dashicons').removeClass('dashicons-plus').addClass('dashicons-update fa-pulse');
 
 				$.ajax({
 					url: wfm_data.ajax_url,
@@ -296,7 +315,8 @@
 				}).done(function (html) {
 					if (html == 1) {
 						btn.addClass('wfm-added');
-						btn.find('.dashicons-plus').removeClass('dashicons-plus').addClass('dashicons-yes');
+						btn.find('.dashicons').removeClass('dashicons-update fa-pulse');
+						btn.find('.dashicons').removeClass('dashicons-plus').addClass('dashicons-yes');
 
 						var fontDataInit = {
 							name: fontData.family,
@@ -317,7 +337,17 @@
 						count += 1;
 
 						$('.wfm-font-count').html(count);
+
+						var message =  _.template(wfm_data.font_added, self._options);
+
+						self.addNotification(message({ name: fontData.family }), 'success');
 					}
+				}).fail(function() {
+					var message =  _.template(wfm_data.adding_error, self._options);
+
+					btn.find('.dashicons').addClass('dashicons-plus').removeClass('dashicons-update fa-pulse');
+
+					self.addNotification(message({ name: fontData.family }), 'error');
 				});
 			});
 		},
@@ -455,7 +485,10 @@
 				var sortVal = $(this).val();
 
 				if (sortVal != 'all') {
-					$.get(self.apiUrl+'&sort='+sortVal);
+					$.get(self.apiUrl+'&sort='+sortVal).fail(function() {
+						self.overlayer.removeClass('active');
+						self.addNotice(wfm_data.data_error, 'error');
+					});
 				}
 				
 			});
@@ -501,6 +534,7 @@
 						font: name
 					};
 
+				itemObj.css('opacity', '0.5');
 
 				$.ajax({
 					url: wfm_data.ajax_url,
@@ -508,7 +542,31 @@
 					data: ajaxData
 				}).done(function (html) {
 					if (html == 1) {
-						itemObj.remove();
+
+						itemObj.animate({
+							scale: 0,
+							opacity: 0 
+						}, {
+							step: function(now,fx) {
+								if (fx.prop == 'scale') {
+									$(this).css({'-webkit-transform':'scale('+now+')', 'transform':'scale('+now+')'});
+								}
+							},
+							start: function ( animation ) {
+								$.each(animation.tweens, function (i, tween) {
+									if (tween.prop == 'scale') {
+										animation.tweens[i].start = 1;
+									}
+								});
+
+								return animation;
+							},
+							duration:'slow',
+							easing: 'linear',
+							complete: function () {
+								itemObj.remove();
+							}
+						});
 
 						var count = parseInt($('.wfm-font-count').html());
 
@@ -516,14 +574,37 @@
 
 						$('.wfm-font-count').html(count);
 
+						var message =  _.template(wfm_data.font_removed, self._options);
+
+						self.addNotification(message({ name: name }), 'warning');
+
 						$('.'+name.toLowerCase().replace(/ /g, '-')).find('.wfm-add-font').removeClass('wfm-added').find('.dashicons').removeClass('dashicons-yes').addClass('dashicons-plus');
 					}
+				}).fail(function() {
+					var message =  _.template(wfm_data.removing_error, self._options);
+
+					itemObj.css('opacity', '1');
+
+					self.addNotification(message({ name: name }), 'error');
 				});
 
 
 			});
 
 			self.efContainer.append(itemObj);
+
+			itemObj.animate({
+				scale: 1,
+				opacity: 1 
+			}, {
+				step: function(now,fx) {
+					if (fx.prop == 'scale') {
+						$(this).css({'-webkit-transform':'scale('+now+')', 'transform':'scale('+now+')'});
+					}
+				},
+				duration:'slow',
+				easing: 'linear',
+			});
 		},
 		onClickYourFont: function () {
 			var self = this;
@@ -595,21 +676,37 @@
 					method: "POST",
 					data: ajaxData
 				}).done(function (html) {
-					if (html == 1) {
-						btn.removeClass('disabled');
+					btn.removeClass('disabled');
 
-						updating.removeClass('active');
-					}
+					updating.removeClass('active');
+
+					var message =  _.template(wfm_data.font_data_changed, self._options);
+
+					self.addNotification(message({ name: fontName }), 'success');
+
+				}).fail(function() {
+					var message =  _.template(wfm_data.changing_error, self._options);
+
+					btn.removeClass('disabled');
+
+					updating.removeClass('active');
+
+					self.addNotification(message({ name: fontName }), 'error');
 				});
 			});
 		},
 		onClickApiUpdate: function () {
+			var self = this;
 			$('.wfm-save-api-settings').on('click', function (e) {
 				e.preventDefault();
 
 				var btn = $(this),
 					api = $('#googleapi').val(),
 					demo = $('#demotext').val();
+
+				if (btn.hasClass('disabled')) {
+					return;
+				}
 
 				btn.addClass('disabled');
 
@@ -627,7 +724,114 @@
 					data: ajaxData
 				}).done(function (html) {
 					location.reload(true);
+				}).fail(function() {
+					self.addNotification(wfm_data.settings_error, 'error');
+					btn.removeClass('disabled');
+
+					$('.wfm-font-api-saving').removeClass('active');
+
+					$('.wfm-font-api-saving').removeClass('active');
 				});
+			});
+		},
+		addNotification: function (message, type) {
+			var notifyTmpl = wp.template('wfm-notification-item'),
+				container = $('.wfm-notification'),
+				data = {
+					message: message,
+					type: type
+				},
+				itemObj = $(notifyTmpl(data));
+
+			this.removeNotification(itemObj);
+
+			container.prepend(itemObj);
+
+			itemObj.animate({
+				scale: 1,
+				opacity: 1 
+			}, {
+				step: function(now,fx) {
+					if (fx.prop == 'scale') {
+						$(this).css({'-webkit-transform':'scale('+now+')', 'transform':'scale('+now+')'});
+					}
+				},
+				duration:'slow',
+				easing: 'linear'
+			});
+		},
+		removeNotification: function (obj) {
+			obj.on('click', function (e) {
+				e.preventDefault();
+
+				obj.animate({
+					scale: 2,
+					opacity: 0 
+				}, {
+					step: function(now,fx) {
+						if (fx.prop == 'scale') {
+							$(this).css({'-webkit-transform':'scale('+now+')', 'transform':'scale('+now+')'});
+						}
+					},
+					duration:'slow',
+					easing: 'linear',
+					start: function ( animation ) {
+						$.each(animation.tweens, function (i, tween) {
+							if (tween.prop == 'scale') {
+								animation.tweens[i].start = 1;
+							}
+						});
+
+						return animation;
+					},
+					complete: function () {
+						obj.remove();
+					}
+				});
+			});
+
+			setTimeout(function () {
+				obj.animate({
+					scale: 2,
+					opacity: 0 
+				}, {
+					step: function(now,fx) {
+						if (fx.prop == 'scale') {
+							$(this).css({'-webkit-transform':'scale('+now+')', 'transform':'scale('+now+')'});
+						}
+					},
+					duration:'slow',
+					easing: 'linear',
+					start: function ( animation ) {
+						$.each(animation.tweens, function (i, tween) {
+							if (tween.prop == 'scale') {
+								animation.tweens[i].start = 1;
+							}
+						});
+
+						return animation;
+					},
+					complete: function () {
+						obj.remove();
+					}
+				});
+			}, 10000);
+		},
+		addNotice: function (message, type) {
+			var self = this,
+				data = {
+					type: type,
+					message: message
+				},
+				noticeObj = $(self.noticeView(data));
+
+			self.noticeContainer.append(noticeObj);
+		},
+		closeNotice: function () {
+			$('body').on('click', '.notice-dismiss', function (e) {
+				e.preventDefault();
+
+				$(this).parent().remove();
 			});
 		}
 	};
