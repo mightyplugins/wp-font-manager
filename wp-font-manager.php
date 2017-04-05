@@ -36,6 +36,12 @@ class WP_Font_Manager
 		add_action( 'wp_ajax_wfm_update_api', array($this, 'update_api_demo') );
 
 		add_action( 'wp_enqueue_scripts', array($this, 'load_google_font') );
+
+		add_action( 'init', array($this, 'load_textdomain') );
+	}
+
+	function load_textdomain() {
+		load_plugin_textdomain( 'wp-font-manager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
 	}
 
 	public function register_pages()
@@ -48,7 +54,7 @@ class WP_Font_Manager
 
 	public function get_svg_icon()
 	{
-		$svg = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 300" style="enable-background:new 0 0 300 300;" xml:space="preserve"><g><path d="M150,0C67.29,0,0,67.29,0,150s67.29,150,150,150s150-67.29,150-150S232.71,0,150,0z M150,270c-66.168,0-120-53.832-120-120 S83.832,30,150,30s120,53.832,120,120S216.168,270,150,270z"/><path d="M194.463,65h-76.926c-5.522,0-10,4.478-10,10v150c0,5.523,4.478,10,10,10h7.692c5.522,0,10-4.477,10-10v-62.886h49.616 c5.522,0,10-4.478,10-10v-7.306c0-5.522-4.478-10-10-10H135.23V92.308h59.233c5.522,0,10-4.478,10-10V75 C204.463,69.478,199.985,65,194.463,65z"/></g></svg>';
+		$svg = '<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 300 300" style="enable-background:new 0 0 300 300;" xml:space="preserve"><g><path d="M150,0C67.29,0,0,67.29,0,150s67.29,150,150,150s150-67.29,150-150S232.71,0,150,0z M150,270c-66.168,0-120-53.832-120-120 S83.832,30,150,30s120,53.832,120,120S216.168,270,150,270z" fill="#82878c"/><path d="M194.463,65h-76.926c-5.522,0-10,4.478-10,10v150c0,5.523,4.478,10,10,10h7.692c5.522,0,10-4.477,10-10v-62.886h49.616 c5.522,0,10-4.478,10-10v-7.306c0-5.522-4.478-10-10-10H135.23V92.308h59.233c5.522,0,10-4.478,10-10V75 C204.463,69.478,199.985,65,194.463,65z" fill="#82878c"/></g></svg>';
 
   		return 'data:image/svg+xml;base64,' . base64_encode( $svg );
 	}
