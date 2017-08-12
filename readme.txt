@@ -4,7 +4,7 @@ Donate link: http://mightyplugins.com/
 Tags: google font, font, font manager, add font
 Requires at least: 4.5
 Tested up to: 4.7
-Stable tag: 4.6
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.txt
 
@@ -27,6 +27,12 @@ Coming Soon...
 
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Performance improved
+* Now with ReactJs
+* Icon bug fixed
 
 = 1.0.0 =
 
