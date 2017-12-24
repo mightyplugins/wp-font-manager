@@ -92,10 +92,7 @@ class WP_Font_Manager {
 			$min = '.min';
 		}
 
-		wp_enqueue_script( 'jquery-masonry' );
 		wp_enqueue_script( 'selectizejs', MP_WFM_URL . 'assets/selectizejs/js/standalone/selectize.js', array( 'jquery', 'wp-util' ), '0.12.4', true );
-		wp_enqueue_script( 'react', MP_WFM_URL . 'assets/js/react' . $min . '.js', array(), '15.6.1', true );
-		wp_enqueue_script( 'react-dom', MP_WFM_URL . 'assets/js/react-dom' . $min . '.js', array(), '15.6.1', true );
 		wp_enqueue_script( 'wfm-main-script', MP_WFM_URL . 'assets/js/main' . $min . '.js', array( 'jquery', 'selectizejs', 'jquery-masonry', 'react', 'react-dom' ), '1.0.0', true );
 
 		wp_localize_script( 'wfm-main-script', 'wfm_data', array(

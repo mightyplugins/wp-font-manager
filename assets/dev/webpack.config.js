@@ -29,8 +29,6 @@ module.exports = {
         new WebpackNotifierPlugin({alwaysNotify: true, skipFirstNotification: false, title: 'Webpack'})
     ],
     externals : {
-        react: 'React',
-        'react-dom': 'ReactDOM',
         jquery: 'jQuery'
     },
     devtool: devtool,
