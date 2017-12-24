@@ -155,12 +155,11 @@
 }
 
 .wfm-fonts-view{
-	-webkit-column-count: 4;
-       -moz-column-count: 4;
-            column-count: 4;
-    -webkit-column-gap: 20px;
-       -moz-column-gap: 20px;
-            column-gap: 20px;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -10px;
+	padding: 10px 0;
+	box-sizing: border-box;
 }
 
 /*Typing Loader*/
@@ -229,19 +228,21 @@
 	  }
 }
 
-.wfm-fonts-view{
-	margin: 30px 0 0;
-}
-
 .wfm-font-item{
-	display: inline-block;
-    width: 100%;
-	margin-bottom: 20px;
+	flex-basis: 0;
+	flex-grow: 1;
+	flex: 0 0 25%;
+	max-width: 100%;
+	padding: 10px;
+	box-sizing: border-box;
+	/* margin-bottom: 20px; */
 }
 .wfm-font-item-inner{
 	background-color: #fff;
 	padding: 20px;
+	height: 100%;
 	box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+	box-sizing: border-box;
 }
 .wfm-font-item .wfm-font-demo{
 	font-size: 25px;

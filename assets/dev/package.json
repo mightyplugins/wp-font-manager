@@ -1,0 +1,44 @@
+{
+  "name": "wp-font-manager",
+  "version": "1.0.1",
+  "description": "WP Font Manager for managing your site google font.",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack --watch",
+    "dev": "webpack",
+    "build": "webpack -p",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MightyPlugins/wp-font-manager.git"
+  },
+  "author": "Raju Ahmmed",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/MightyPlugins/wp-font-manager/issues"
+  },
+  "homepage": "https://github.com/MightyPlugins/wp-font-manager#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "jquery": "^3.2.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "uglifyjs-webpack-plugin": "^1.1.4",
+    "webpack": "^3.10.0",
+    "webpack-livereload-plugin": "^1.0.0",
+    "webpack-notifier": "^1.5.0"
+  },
+  "babel": {
+    "presets": [
+      "react",
+      "es2015"
+    ]
+  },
+  "dependencies": {
+    "deep-equal": "^1.0.1"
+  }
+}
